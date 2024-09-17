@@ -3,59 +3,33 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
-    <nav
-      className="navbar navbar-expand-lg border-bottom"
-      style={{ backgroundColor: "#FFF" }}
-    >
-      <div className="container p-2">
-        <Link className="navbar-brand" to={"/"}>
-          <img
-            src="media/images/logo.svg"
-            style={{ width: "25%" }}
-            alt="Logo"
-          />
+    <nav className="bg-white border-b">
+      <div className="container mx-auto p-4 flex justify-between items-center">
+        <Link to={"/"}>
+          <img src="media/images/logo.svg" className="w-1/4" alt="Logo" />
         </Link>
         <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
+          className="block md:hidden text-gray-500 focus:outline-none"
           aria-label="Toggle navigation"
         >
-          <span className="navbar-toggler-icon"></span>
+          <span className="material-icons">menu</span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <form className="d-flex" role="search">
-            <ul className="navbar-nav mb-lg-0">
-              <li className="nav-item">
-                <Link className="nav-link active" aria-current="page" to={"/signup"}>
-                  Signup
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to={"/about"}>
-                  About
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to={"/product"}>
-                  Product
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to={"/pricing"}>
-                  Pricing
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to={"/support"}>
-                  Support
-                </Link>
-              </li>
-            </ul>
-          </form>
+        <div className="hidden md:flex space-x-4">
+          <Link className="text-gray-700" to={"/signup"}>
+            Signup
+          </Link>
+          <Link className="text-gray-700" to={"/about"}>
+            About
+          </Link>
+          <Link className="text-gray-700" to={"/product"}>
+            Product
+          </Link>
+          <Link className="text-gray-700" to={"/pricing"}>
+            Pricing
+          </Link>
+          <Link className="text-gray-700" to={"/support"}>
+            Support
+          </Link>
         </div>
       </div>
     </nav>

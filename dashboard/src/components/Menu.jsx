@@ -17,6 +17,11 @@ const Menu = () => {
   const menuClass = "menu";
   const activeMenuClass = "menu selected";
 
+  const signOutHandler = () => {
+    localStorage.removeItem("token");
+    window.location.href = "http://localhost:5173/?signOut=true";
+  };
+
   return (
     <div className="menu-container">
       <img src="logo.png" style={{ width: "50px" }} />
@@ -87,6 +92,19 @@ const Menu = () => {
                 Apps
               </p>
             </Link>
+          </li>
+          <li>
+            <button
+              style={{ all: "unset", cursor: "pointer" }}
+              onClick={() => {
+                signOutHandler();
+                // window.location.href = "http://localhost:5173/";
+              }}
+            >
+              <p className={selectedMenu === 7 ? activeMenuClass : menuClass}>
+                LogOut
+              </p>
+            </button>
           </li>
         </ul>
         <hr />

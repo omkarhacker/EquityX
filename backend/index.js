@@ -5,17 +5,24 @@ const app=express();
 const mongoose=require("mongoose");
 const bodyParser=require("body-parser");
 const cors=require("cors");
+const jwt = require("jsonwebtoken");
+const zod = require("zod");
+const bcrypt = require("bcrypt");
 
 const { HoldingsModel } = require("./model/HoldingsModel");
 
 const { PositionsModel } = require("./model/PositionsModel");
 const { OrdersModel } = require("./model/OrdersModel");
+const { UserModel } = require('./model/UserModel');  
+
 
 const PORT=process.env.PORT || 3002;
 const uri=process.env.MONGO_URL;
 
 
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(express.json());
 app.use(bodyParser.json());
 
 // app.get("/addHoldings", async (req, res) => {
@@ -199,6 +206,11 @@ app.get("/allHoldings", async (req, res) => {
     res.json(allPositions);
   });
 
+  app.get("/allOrders", async (req, res) => {
+    let allOrders = await OrdersModel.find({});
+    res.json(allOrders);
+  });
+
   app.post("/newOrder", async (req, res) => {
     let newOrder = new OrdersModel({
       name: req.body.name,
@@ -211,8 +223,108 @@ app.get("/allHoldings", async (req, res) => {
   
     res.send("Order saved!");
   });
-  
 
+
+  const signupBody = zod.object({
+    username: zod.string().email(),
+    firstName: zod.string(),
+    lastName: zod.string(),
+    password: zod.string(),
+  });
+
+  app.post("/signup", async (req, res) => {
+    try {
+      const { success } = signupBody.safeParse(req.body);
+      if (!success) {
+        return res.status(411).json({
+          message: "Incorrect inputs",
+        });
+      }
+  
+      const existingUser = await UserModel.findOne({
+        username: req.body.username,
+      });
+  
+      if (existingUser) {
+        return res.status(411).json({
+          message: "Email already taken",
+        });
+      }
+  
+      const { username, firstName, lastName, password } = req.body;
+  
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+  
+      const newUser = new UserModel({
+        username,
+        firstName,
+        lastName,
+        password: hashedPassword,
+      });
+  
+      await newUser.save();
+  
+      const token = jwt.sign(
+        {
+          userId: newUser._id,
+        },
+        process.env.JWT_SECRET
+      );
+  
+      res.status(200).json({
+        message: "User created successfully",
+        token: token,
+      });
+    } catch (error) {
+      res.status(500).send("Server error");
+    }
+  });
+
+
+  const signinBody = zod.object({
+    username: zod.string().email(),
+    password: zod.string(),
+  });
+
+
+  app.post("/signin", async (req, res) => {
+    const { success } = signinBody.safeParse(req.body);
+    if (!success) {
+      return res.status(411).json({
+        message: "Incorrect inputs",
+      });
+    }
+  
+    const user = await UserModel.findOne({
+      username: req.body.username,
+    });
+  
+    if (!user) {
+      return res.status(404).json("User not found!");
+    }
+  
+    if (user) {
+      const match = await bcrypt.compare(req.body.password, user.password);
+      if (!match) {
+        return res.status(401).json("Wrong credentials!");
+      }
+  
+      const token = jwt.sign(
+        {
+          userId: user._id,
+        },
+        process.env.JWT_SECRET
+      );
+  
+      res.status(200).json({
+        token: token,
+      });
+      return;
+    }
+  });
+  
+  
 
 app.listen(PORT,()=>{
     console.log("App started");

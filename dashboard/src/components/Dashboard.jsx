@@ -10,6 +10,7 @@ import Positions from "./Positions";
 import Summary from "./Summary";
 import WatchList from "./WatchList";
 import { GeneralContextProvider } from "./GeneralContext";
+import { Logout } from "@mui/icons-material";
 
 const Dashboard = () => {
   return (

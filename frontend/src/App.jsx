@@ -8,6 +8,7 @@ import SupportPage from "./landing_page/support/SupportPage"
 import Navbar from "./landing_page/Navbar"
 import Footer from "./landing_page/Footer"
 import NotFound from "./landing_page/NotFound"
+import { Signin } from "./landing_page/signup/Signin"
 
 function App() {
 
@@ -19,6 +20,8 @@ function App() {
         <Route path="/" element={<HomePage/>}>
         </Route>
         <Route path="/signup" element={<Signup/>}>
+        </Route>
+        <Route path="/signin" element={<Signin/>}>
         </Route>
         <Route path="/about" element={<AboutPage/>}>
         </Route>
